@@ -4,27 +4,27 @@ kind: ClusterRole
 metadata:
   name: serverclass-editor-role
 rules:
-- apiGroups:
-  - metal.sidero.dev
-  resources:
-  - serverclasses
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - metal.sidero.dev
-  resources:
-  - serverclasses/status
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
+  - apiGroups:
+      - metal.sidero.dev
+    resources:
+      - serverclasses
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - metal.sidero.dev
+    resources:
+      - serverclasses/status
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch

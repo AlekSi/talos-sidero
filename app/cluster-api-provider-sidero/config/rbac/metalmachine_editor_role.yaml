@@ -4,23 +4,23 @@ kind: ClusterRole
 metadata:
   name: metalmachine-editor-role
 rules:
-- apiGroups:
-  - infrastructure.cluster.x-k8s.io
-  resources:
-  - metalmachines
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - infrastructure.cluster.x-k8s.io
-  resources:
-  - metalmachines/status
-  verbs:
-  - get
-  - patch
-  - update
+  - apiGroups:
+      - infrastructure.cluster.x-k8s.io
+    resources:
+      - metalmachines
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - infrastructure.cluster.x-k8s.io
+    resources:
+      - metalmachines/status
+    verbs:
+      - get
+      - patch
+      - update

@@ -4,17 +4,17 @@ kind: ClusterRole
 metadata:
   name: serverclass-viewer-role
 rules:
-- apiGroups:
-  - metal.sidero.dev
-  resources:
-  - serverclasses
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - metal.sidero.dev
-  resources:
-  - serverclasses/status
-  verbs:
-  - get
+  - apiGroups:
+      - metal.sidero.dev
+    resources:
+      - serverclasses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - metal.sidero.dev
+    resources:
+      - serverclasses/status
+    verbs:
+      - get

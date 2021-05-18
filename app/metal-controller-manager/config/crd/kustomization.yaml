@@ -2,9 +2,9 @@
 # since it depends on service name and namespace that are out of this kustomize package.
 # It should be run by config/default
 resources:
-- bases/metal.sidero.dev_environments.yaml
-- bases/metal.sidero.dev_servers.yaml
-- bases/metal.sidero.dev_serverclasses.yaml
+  - bases/metal.sidero.dev_environments.yaml
+  - bases/metal.sidero.dev_servers.yaml
+  - bases/metal.sidero.dev_serverclasses.yaml
 # +kubebuilder:scaffold:crdkustomizeresource
 
 commonLabels:
@@ -27,4 +27,4 @@ patchesStrategicMerge:
 
 # the following config is for teaching kustomize how to do kustomization for CRDs.
 configurations:
-- kustomizeconfig.yaml
+  - kustomizeconfig.yaml
