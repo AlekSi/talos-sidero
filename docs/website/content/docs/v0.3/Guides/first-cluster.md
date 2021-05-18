@@ -30,7 +30,7 @@ kubectl patch deploy -n sidero-system sidero-controller-manager --type='json' -p
 #### Update Environment
 
 The metadata server's information needs to be updated in the default environment.
-Edit the environment with `kubectl edit environment default` and update the `talos.config` kernel arg with the IP of one of the management plane nodes (or the DNS entry you created) and the nodeport we specified above (30005).
+Edit the environment with `kubectl edit environment default` and update the `talos.config` kernel arg with the IP of one of the management plane nodes (or the DNS entry you created).
 
 ### Update DHCP
 

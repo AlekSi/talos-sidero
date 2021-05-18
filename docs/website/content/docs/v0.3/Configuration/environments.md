@@ -16,7 +16,7 @@ The hierarchy from most to least respected is:
 
 - `.spec.environmentRef` provided at `Server` level
 - `.spec.environmentRef` provided at `ServerClass` level
-- `"default"` `Environment` created by administrator
+- `"default"` `Environment` created automatically and modified by an administrator
 
 A sample environment definition looks like this:
 
@@ -27,27 +27,27 @@ metadata:
   name: default
 spec:
   kernel:
-    url: "https://github.com/talos-systems/talos/releases/download/v0.8.1/vmlinuz-amd64"
+    url: "https://github.com/talos-systems/talos/releases/download/v0.9.3/vmlinuz-amd64"
     sha512: ""
     args:
-      - init_on_alloc=1
-      - init_on_free=1
-      - slab_nomerge
-      - pti=on
-      - consoleblank=0
-      - random.trust_cpu=on
-      - ima_template=ima-ng
-      - ima_appraise=fix
-      - ima_hash=sha512
       - console=tty0
       - console=ttyS1,115200n8
+      - consoleblank=0
       - earlyprintk=ttyS1,115200n8
+      - ima_appraise=fix
+      - ima_hash=sha512
+      - ima_template=ima-ng
+      - init_on_alloc=1
+      - init_on_free=1
       - panic=0
       - printk.devkmsg=on
-      - talos.platform=metal
+      - pti=on
+      - random.trust_cpu=on
+      - slab_nomerge
       - talos.config=http://$PUBLIC_IP:8081/configdata?uuid=
+      - talos.platform=metal
   initrd:
-    url: "https://github.com/talos-systems/talos/releases/download/v0.8.1/initramfs-amd64.xz"
+    url: "https://github.com/talos-systems/talos/releases/download/v0.9.3/initramfs-amd64.xz"
     sha512: ""
 ```
 

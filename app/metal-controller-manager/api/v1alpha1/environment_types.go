@@ -5,8 +5,14 @@
 package v1alpha1
 
 import (
+	"fmt"
+	"runtime"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
+
+// EnvironmentDefault is an automatically created Environment.
+const EnvironmentDefault = "default"
 
 type Asset struct {
 	URL    string `json:"url,omitempty"`
@@ -63,6 +69,42 @@ type EnvironmentList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []Environment `json:"items"`
+}
+
+// EnvironmentDefaultSpec returns EnvironmentDefault's spec.
+func EnvironmentDefaultSpec(talosRelease, endpoint string) *EnvironmentSpec {
+	return &EnvironmentSpec{
+		Kernel: Kernel{
+			Asset: Asset{
+				URL: fmt.Sprintf("https://github.com/talos-systems/talos/releases/download/%s/vmlinuz-%s", talosRelease, runtime.GOARCH),
+			},
+			Args: []string{
+				"console=tty0",
+				"console=ttyS1,115200n8",
+				"consoleblank=0",
+				"earlyprintk=ttyS1,115200n8",
+				"ima_appraise=fix",
+				"ima_hash=sha512",
+				"ima_template=ima-ng",
+				"init_on_alloc=1",
+				"init_on_free=1",
+				"initrd=initramfs.xz",
+				"page_poison=1",
+				"printk.devkmsg=on",
+				"pti=on",
+				"random.trust_cpu=on",
+				"slab_nomerge",
+				"slub_debug=P",
+				"talos.platform=metal",
+				fmt.Sprintf("talos.config=http://%s:8081/configdata?uuid=", endpoint),
+			},
+		},
+		Initrd: Initrd{
+			Asset: Asset{
+				URL: fmt.Sprintf("https://github.com/talos-systems/talos/releases/download/%s/initramfs-%s.xz", talosRelease, runtime.GOARCH),
+			},
+		},
+	}
 }
 
 func init() {

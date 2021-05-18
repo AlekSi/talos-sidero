@@ -49,6 +49,9 @@ const (
 )
 
 var (
+	// TalosRelease is set as a build argument.
+	TalosRelease string
+
 	scheme   = runtime.NewScheme()
 	setupLog = ctrl.Log.WithName("setup")
 )
@@ -93,6 +96,11 @@ func main() {
 
 	flag.Parse()
 
+	// we can't continue without it
+	if TalosRelease == "" {
+		panic("TalosRelease is not set during the build")
+	}
+
 	// workaround for clusterctl not accepting empty value as default value
 	if extraAgentKernelArgs == "-" {
 		extraAgentKernelArgs = ""
@@ -100,6 +108,15 @@ func main() {
 
 	if apiEndpoint == "-" {
 		apiEndpoint = ""
+	}
+
+	if apiEndpoint == "" {
+		if endpoint, ok := os.LookupEnv("API_ENDPOINT"); ok {
+			apiEndpoint = endpoint
+		} else {
+			setupLog.Error(fmt.Errorf("no api endpoint found"), "")
+			os.Exit(1)
+		}
 	}
 
 	ctrl.SetLogger(zap.New(func(o *zap.Options) {
@@ -148,9 +165,11 @@ func main() {
 		corev1.EventSource{Component: "sidero-controller-manager"})
 
 	if err = (&controllers.EnvironmentReconciler{
-		Client: mgr.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("Environment"),
-		Scheme: mgr.GetScheme(),
+		Client:       mgr.GetClient(),
+		Log:          ctrl.Log.WithName("controllers").WithName("Environment"),
+		Scheme:       mgr.GetScheme(),
+		TalosRelease: TalosRelease,
+		APIEndpoint:  apiEndpoint,
 	}).SetupWithManager(mgr, controller.Options{MaxConcurrentReconciles: defaultMaxConcurrentReconciles}); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "Environment")
 		os.Exit(1)
@@ -191,15 +210,6 @@ func main() {
 
 	setupLog.Info("starting iPXE server")
 
-	if apiEndpoint == "" {
-		if endpoint, ok := os.LookupEnv("API_ENDPOINT"); ok {
-			apiEndpoint = endpoint
-		} else {
-			setupLog.Error(fmt.Errorf("no api endpoint found"), "unable to start iPXE server", "controller", "Environment")
-			os.Exit(1)
-		}
-	}
-
 	if err := ipxe.RegisterIPXE(httpMux, apiEndpoint, apiPort, extraAgentKernelArgs, apiPort, mgr.GetClient()); err != nil {
 		setupLog.Error(err, "unable to start iPXE server", "controller", "Environment")
 		os.Exit(1)
@@ -228,6 +238,11 @@ func main() {
 
 	if err = controllers.ReconcileServerClassAny(context.TODO(), k8sClient); err != nil {
 		setupLog.Error(err, `failed to reconcile ServerClass "any"`)
+		os.Exit(1)
+	}
+
+	if err = controllers.ReconcileEnvironmentDefault(context.TODO(), k8sClient, TalosRelease, apiEndpoint); err != nil {
+		setupLog.Error(err, `failed to reconcile Environment "default"`)
 		os.Exit(1)
 	}
 
